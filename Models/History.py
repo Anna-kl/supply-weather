@@ -2,7 +2,7 @@ import configparser
 import sqlalchemy
 import psycopg2
 import json
-
+import datetime
 from sklearn import preprocessing
 import requests
 from sqlalchemy import create_engine
@@ -10,14 +10,17 @@ from sqlalchemy.dialects.postgresql import DOUBLE_PRECISION
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Table, Column, MetaData, Integer, Computed,  DateTime
 from sqlalchemy.orm import Session, sessionmaker
-
+from config import Config
 
 Base = declarative_base()
 
 
 class History:
     def __init__(self):
-        self.connection()
+        self.settings_base=Config('/settings.json')
+        self.settings_base.load_config()
+        self.settings_base=self.settings_base.api_key()
+        # self.connection()
 
         # url = 'postgresql://{}:{}@{}:{}/{}'
         # url = url.format(setting.login, setting.password, setting.host,
@@ -40,25 +43,26 @@ class History:
         self.meta.create_all()
 
     def get_data_hist(self, lat, lng, start_year, end_year):
-        Session = sessionmaker(self.con)
-        session=Session()
-        day_t=start_year.day-2
-        year=start_year.year
+        # Session = sessionmaker(self.con)
+        # session=Session()
+        day_t=datetime.datetime.now().day-2
+        day_f = datetime.datetime.now().day + 2
+        year=start_year
         while(start_year<end_year):
           day = day_t
-          while day<=9:
+          while day<=day_f:
             url = 'https://api.weatherbit.io/v2.0/history/daily?lat={0}&lon={1}&key={2}' \
-              '&start_date={3}-05-0{4}&end_date={3}-05-0{5}'.format(lat, lng, self.settings_base['api_key'],
-                                                    year, day, day+1)
+              '&start_date={3}-05-0{4}&end_date={3}-05-{5}'.format(lat, lng, self.settings_base['api_key'],
+                                                    start_year, day, day+1)
             r = requests.get(url)
             data = json.loads(r.content.decode())
-            send =json.dumps({'rh': data['data'][0]['rh'], 'temp': data['data'][0]['temp'], "LocationIds": 1,
+            send =json.dumps({'restriction':'', 'warning':'', 'rh': data['data'][0]['rh'], 'temp': data['data'][0]['temp'], "LocationIds": 1,
                     'pres': data['data'][0]['pres'] / 1.334, "wind_spd": data['data'][0]['wind_spd'],
                     "clouds": data['data'][0]['clouds'],
-                    "lng": lng, "lat": lat, "snow": 0, 'vis': 0, 'dttm': "{0}-05-0{1}". format(year, day)})
+                    "lng": lng, "lat": lat, "snow": data['data'][0]['snow'], 'vis': 0, 'dttm': data['data'][0]['datetime']. format(year, day)})
 
             headers = {'Authorization':
-                           'Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6IjlEM0YyNDA0MEQ2QUZCODdCQjhDMkNBQjMwOEU4OUQwNEUwQzhCOTYiLCJ0eXAiOiJhdCtqd3QiLCJ4NXQiOiJuVDhrQkExcS00ZTdqQ3lyTUk2SjBFNE1pNVkifQ.eyJuYmYiOjE2MjA0ODc3OTEsImV4cCI6MTYyMDQ4OTU5MSwiaXNzIjoiaHR0cHM6Ly90ZXN0LmFjdHVhbC5zdXBwbHkiLCJhdWQiOiJhcGkiLCJjbGllbnRfaWQiOiJqcyIsInN1YiI6IjUyIiwiYXV0aF90aW1lIjoxNjIwNDgyNDU2LCJpZHAiOiJHb29nbGUiLCJzY29wZSI6WyJvcGVuaWQiLCJwcm9maWxlIiwiYXBpIl0sImFtciI6WyJleHRlcm5hbCJdfQ.GYbLTsyshr3GUmjMUJ2czs7vWtDpPidPbrodPLDkaFZWzLqkxhjhVmfxw7t4MMwFGP3YIGobIiCKewZ5TJPEqQcxwNyQqTSK2bHlUv3-MVcyGf9gzzErEAKHOWtLhjp4gGnv6tANThAB4oJI1o5xg75XRLbs8LMN8oL1E4C2mHhJuz0zyIs8B03xsRFwo_yul5PQUzVRL_mA52QwE7ZNhFgcK6XoNhtd4PP3TtcT9x-1Ck7vwzzx15VaaIoD7LZKNjOijb5yviMyLJmZ4cVMVEUNKv_smLknLQ9Ji_PcQotwywzYzXxNpDVLKnVHIj9SOY4XNM_sgDkqZoih_eHh-g',
+                           'Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6IjlEM0YyNDA0MEQ2QUZCODdCQjhDMkNBQjMwOEU4OUQwNEUwQzhCOTYiLCJ0eXAiOiJhdCtqd3QiLCJ4NXQiOiJuVDhrQkExcS00ZTdqQ3lyTUk2SjBFNE1pNVkifQ.eyJuYmYiOjE2MjA5MDk4MTYsImV4cCI6MTYyMDkxMTYxNiwiaXNzIjoiaHR0cHM6Ly90ZXN0LmFjdHVhbC5zdXBwbHkiLCJhdWQiOiJhcGkiLCJjbGllbnRfaWQiOiJqcyIsInN1YiI6IjUyIiwiYXV0aF90aW1lIjoxNjIwOTA5ODE2LCJpZHAiOiJHb29nbGUiLCJzY29wZSI6WyJvcGVuaWQiLCJwcm9maWxlIiwiYXBpIl0sImFtciI6WyJleHRlcm5hbCJdfQ.bvEh7sSGvfbI3V2VqLfHYPuhzXLtshl0MMAn7j0TO48sVBnlCKJPcpguJJYNpiXeKwTO8imtOxa5_7ygVZn3CjcbnO7hGLW1MX3sygXhLbE1j1n5BL7hL__0yTKf6gjyuhSBp9sn4go4kxUVmgHi3mYezG-8uoH1IeDiO2orNpgs4GE5C8gBTU-yPvno0OIL5vzYZjJpkYM98JK7SCOGZAk9eiHbWt2TQnH5ZXbXvuf3KZX7IL_kRI5eXU_j2tZd-LEFPjRccbjrD3v3bn3CLu3XDd4ARO1JYP_6-UIVCcGOajg7Bv8CrqVrTaA0uALDf4n4PXVjWx_QvGXJnZ5Irw',
                        'Content-type': 'application/json'}
             r = requests.post('https://localhost:44321/api/weather-restrictions/addparam', data=send, headers=headers,
                               verify=False)
@@ -73,7 +77,7 @@ class History:
 
             day+=1
           start_year += 1
-        session.commit()
+       # session.commit()
 
 
 
