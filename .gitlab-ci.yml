@@ -10,4 +10,4 @@ stages:
 pylint:
   stage: lint
   script:
-    - python -m pylint src
+    - pylint src
