@@ -1,0 +1,13 @@
+image: "python:3.9"
+
+before_script:
+  - python --version
+  - pip install -r requirements.txt
+
+stages:
+  - lint
+
+pylint:
+  stage: lint
+  script:
+    - python -m pylint src
