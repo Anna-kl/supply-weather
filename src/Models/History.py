@@ -1,11 +1,10 @@
-import configparser
+
 import sqlalchemy
-import psycopg2
 import json
 import datetime
-from sklearn import preprocessing
+
 import requests
-from sqlalchemy import create_engine
+
 from sqlalchemy.dialects.postgresql import DOUBLE_PRECISION
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Table, Column, MetaData, Integer, Computed,  DateTime

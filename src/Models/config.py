@@ -14,17 +14,15 @@
 # limitations under the License.
 ##########################################################################
 import configparser
-import os
-import json
 
-class Config():
 
+class Config:
 
     def __init__(self, filename):
+        self.config = configparser.ConfigParser()
         self.filename = filename
 
     def load_config(self):
-        self.config = configparser.ConfigParser()
         self.config.read('./config.ini')
 
     def red_access(self):
@@ -32,18 +30,17 @@ class Config():
                    'return_url': self.config.get('TOKEN', 'return_url'),
                    'username': self.config.get('TOKEN', 'username'),
                    'password': self.config.get('TOKEN', 'password')}
-        return  str_con
-    def read_db(self):
+        return str_con
 
-        str_con={'host':self.config.get('DATABASE','host'),
-                 'user':self.config.get('DATABASE','user'),
-                 'password': self.config.get('DATABASE', 'password'),
-                 'port': '5432',
-                 'api_key':self.config.get('WEATHER', 'api_key'),
-                 'db':self.config.get('DATABASE', 'db')}
+    def read_db(self):
+        str_con = {'host': self.config.get('DATABASE', 'host'),
+                   'user': self.config.get('DATABASE', 'user'),
+                   'password': self.config.get('DATABASE', 'password'),
+                   'port': '5432',
+                   'api_key': self.config.get('WEATHER', 'api_key'),
+                   'db': self.config.get('DATABASE', 'db')}
         return str_con
 
     def api_key(self):
-        str_con={'api_key':self.config.get('WEATHER','api_key')}
+        str_con = {'api_key': self.config.get('WEATHER', 'api_key')}
         return str_con
-
