@@ -3,6 +3,7 @@ from .Models.Weather import Weather
 
 url = 'https://api.weatherbit.io/v2.0/current?city=Tomsk&country=RU&key=48c910f8c4054b3cac5a84da4013c0d9&include' \
       '=minutely '
+url_server = 'https://localhost:44321/api/weather-restrictions/'
 req = urllib.request.Request(url)
 from .client import get_token
 

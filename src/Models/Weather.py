@@ -1,10 +1,9 @@
-
 import requests
 import json
 import pandas as pd
 import datetime
 from .config import Config
-url = 'https://localhost:44321/api/weather-restrictions/'
+URL = 'https://localhost:44321/api/weather-restrictions/'
 PARAM = ['rh', 'temp', 'wind_spd', 'wind_gust_spd', 'vis', 'clouds', 'snow',
          'pres']
 
@@ -65,7 +64,7 @@ class Weather:
         end = start_date + datetime.timedelta(days=3)
         send = {"StartDate": start.strftime('%Y-%m-%d'), "EndDate": end.strftime('%Y-%m-%d'), "LocationIds": [1],
                 "param": "hist"}
-        r = requests.post(url + 'get/', data=json.dumps(send), headers=headers,
+        r = requests.post(URL + 'get/', data=json.dumps(send), headers=headers,
                           verify=False)
         data = json.loads(r.content.decode())
         data = pd.DataFrame(data['items']).append(get_data, ignore_index=True)
@@ -129,7 +128,9 @@ class Weather:
         # send ='{"StartDate": "2021-05-04","EndDate": "2021-05-05","LocationIds": [1], "param":"hist"}'
         # r = requests.post(url+'get/', data=send, headers=headers,
         #                 verify=False)
-        r = requests.get('https://api.weatherbit.io/v2.0/forecast/daily?lat={0}&lon={1}&key={2}'.format(lat, lng,
+        r = requests.get('https://api.weatherbit.io/v2.0/'
+                         'forecast/daily?lat={0}&lon={1}&key={2}'.
+                         format(lat, lng,
                                                                                                         api_key[
                                                                                                             'api_key']))
         data = json.loads(r.content.decode())

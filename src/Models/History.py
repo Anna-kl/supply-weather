@@ -9,7 +9,7 @@ from sqlalchemy.dialects.postgresql import DOUBLE_PRECISION
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Table, Column, MetaData, Integer, Computed,  DateTime
 from sqlalchemy.orm import Session, sessionmaker
-from config import Config
+from .config import Config
 
 Base = declarative_base()
 
@@ -17,7 +17,6 @@ Base = declarative_base()
 class History:
     def __init__(self):
         self.settings_base=Config('/settings.json')
-        self.settings_base.load_config()
         self.settings_base=self.settings_base.api_key()
         # self.connection()
 
@@ -31,7 +30,7 @@ class History:
 
     def connection(self):
         url = 'postgresql://{}:{}@{}:{}/{}'
-        self.settings_base=self.read_config()
+
         url = url.format(self.settings_base['user'], self.settings_base['password'],
                          self.settings_base['host'],
                          self.settings_base['port'], self.settings_base['db'])

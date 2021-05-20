@@ -1,5 +1,4 @@
 import requests
-
 import re
 from .Models import config
 
@@ -11,8 +10,8 @@ data = {"Username": conf['username'], "Password": conf['password'], "RememberLog
 
 
 def get_token():
-    r = requests.post(conf['url'], verify=False, data=data)
-    r = requests.get(r.url, verify=False)
-    params = r.url.split('#')[1]
+    r_url = requests.post(conf['url'], verify=False, data=data)
+    r_url = requests.get(r_url.url, verify=False)
+    params = r_url.url.split('#')[1]
     d = dict(re.findall(r'([^=&]*)=([^&]*)', params))
     return d
