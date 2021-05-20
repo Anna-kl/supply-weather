@@ -10,4 +10,4 @@ stages:
 pylint:
   stage: lint
   script:
-    - pylint src
+    - pylint src --errors-only
