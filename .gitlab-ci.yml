@@ -13,3 +13,7 @@ pylint:
   script:
     - pylint src --errors-only
 
+docker_build:
+  script:
+    - docker build -t weather .
+    - docker run weather
