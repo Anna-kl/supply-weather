@@ -6,7 +6,7 @@ before_script:
 
 stages:
   - lint
-  - docker_build
+  - build
 
 pylint:
   stage: lint
@@ -14,6 +14,7 @@ pylint:
     - pylint src --errors-only
 
 docker_build:
+  stage: build
   script:
     - docker build -t weather .
     - docker run weather
