@@ -9,36 +9,18 @@ from sqlalchemy.dialects.postgresql import DOUBLE_PRECISION
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Table, Column, MetaData, Integer, Computed,  DateTime
 from sqlalchemy.orm import Session, sessionmaker
-from .config import Config
 
 Base = declarative_base()
 
 
 class History:
     def __init__(self):
-        self.settings_base=Config('/settings.json')
-        self.settings_base=self.settings_base.api_key()
-        # self.connection()
-
-        # url = 'postgresql://{}:{}@{}:{}/{}'
-        # url = url.format(setting.login, setting.password, setting.host,
-        #                  setting.port, setting.name)
-        #
-        # con = sqlalchemy.create_engine(url, echo=True)
+       pass
 
 
 
-    def connection(self):
-        url = 'postgresql://{}:{}@{}:{}/{}'
 
-        url = url.format(self.settings_base['user'], self.settings_base['password'],
-                         self.settings_base['host'],
-                         self.settings_base['port'], self.settings_base['db'])
 
-        # The return value of create_engine() is our connection object
-        self.con = sqlalchemy.create_engine(url, client_encoding='utf8')
-        self.meta = sqlalchemy.MetaData(bind=self.con,  schema='public')
-        self.meta.create_all()
 
     def get_data_hist(self, lat, lng, start_year, end_year):
         # Session = sessionmaker(self.con)
@@ -66,12 +48,7 @@ class History:
                               verify=False)
 
             print(r.content)
-            # add=Weather_Param(rh=data['data'][0]['rh'], temp=data['data'][0]['temp'],
-            #               pres=data['data'][0]['pres']/1.334, wind_spd=data['data'][0]['wind_spd'],
-            #               clouds=data['data'][0]['clouds'], wind_gust_spd=data['data'][0]['wind_gust_spd'],
-            #               locationids=1, lng=lng, lat=lat, snow=0, vis=0, dttm='{0}-05-0{1}'.format(start_year, day))
-            #
-            # session.add(add)
+
 
             day+=1
           start_year += 1

@@ -2,8 +2,8 @@ import requests
 import json
 import pandas as pd
 import datetime
-from .config import Config
-URL = 'https://localhost:44321/api/weather-restrictions/'
+import os
+
 PARAM = ['rh', 'temp', 'wind_spd', 'wind_gust_spd', 'vis', 'clouds', 'snow',
          'pres']
 
@@ -31,11 +31,10 @@ def calculated(data, param):
     return data
 
 
-_config = Config('/config.ini')
-_config.load_config()
-api_key = _config.api_key()
 
+api_key = os.environ['api_key']
 
+URL=os.environ['URL']
 class Weather:
     rh = None  # Влажность
     clouds = None  # облачность
@@ -115,7 +114,7 @@ class Weather:
         # r = requests.post(url+'get/', data=send, headers=headers,
         #                 verify=False)
         r = requests.get(
-            'https://api.weatherbit.io/v2.0/current?lat={0}&lon={1}&key={2}'.format(lat, lng, api_key['api_key']))
+            'https://api.weatherbit.io/v2.0/current?lat={0}&lon={1}&key={2}'.format(lat, lng, api_key))
         data = json.loads(r.content.decode())
         self.send = {'rh': data['data'][0]['rh'], 'temp': data['data'][0]['temp'], "LocationIds": 1,
                      'pres': data['data'][0]['pres'] / 1.334, "wind_spd": data['data'][0]['wind_spd'],
@@ -130,9 +129,7 @@ class Weather:
         #                 verify=False)
         r = requests.get('https://api.weatherbit.io/v2.0/'
                          'forecast/daily?lat={0}&lon={1}&key={2}'.
-                         format(lat, lng,
-                                                                                                        api_key[
-                                                                                                            'api_key']))
+                         format(lat, lng,  api_key))
         data = json.loads(r.content.decode())
         get_data = []
         for i in range(0, days):

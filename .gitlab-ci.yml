@@ -6,8 +6,10 @@ before_script:
 
 stages:
   - lint
+  - docker_build
 
 pylint:
   stage: lint
   script:
     - pylint src --errors-only
+
