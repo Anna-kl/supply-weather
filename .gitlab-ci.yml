@@ -1,8 +1,6 @@
 image: "python:3.9"
 
-before_script:
-  - python --version
-  - pip install -r requirements.txt
+
 
 stages:
   - lint
@@ -11,6 +9,7 @@ stages:
 pylint:
   stage: lint
   script:
+    - pip install -r requirements.txt
     - pylint src --errors-only
 
 docker_build:
