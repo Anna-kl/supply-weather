@@ -2,7 +2,7 @@
 import sqlalchemy
 import json
 import datetime
-
+import os
 import requests
 
 from sqlalchemy.dialects.postgresql import DOUBLE_PRECISION
@@ -12,7 +12,7 @@ from sqlalchemy.orm import Session, sessionmaker
 
 Base = declarative_base()
 
-
+api_key = os.environ['api_key']
 class History:
     def __init__(self):
        pass
@@ -32,7 +32,8 @@ class History:
           day = day_t
           while day<=day_f:
             url = 'https://api.weatherbit.io/v2.0/history/daily?lat={0}&lon={1}&key={2}' \
-              '&start_date={3}-05-0{4}&end_date={3}-05-{5}'.format(lat, lng, self.settings_base['api_key'],
+              '&start_date={3}-05-0{4}&end_date={3}-05-{5}'.format(lat, lng,
+                                                                   api_key,
                                                     start_year, day, day+1)
             r = requests.get(url)
             data = json.loads(r.content.decode())
