@@ -1,4 +1,4 @@
-image: docker:19.03.12
+
 
 variables:
   # When you use the dind service, you must instruct Docker to talk with
@@ -30,11 +30,13 @@ stages:
 
 pylint:
   stage: lint
+  image: "python:3.9"
   script:
     - pylint src --errors-only
 
 docker_build:
   stage: build
+  image: docker:19.03.12
   script:
     - docker build -t weather .
     - docker run weather
