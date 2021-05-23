@@ -1,5 +1,4 @@
 
-
 variables:
   # When you use the dind service, you must instruct Docker to talk with
   # the daemon started inside of the service. The daemon is available
@@ -19,10 +18,7 @@ variables:
 
 services:
   - docker:19.03.12-dind
-before_script:
-  - python --version
-  - pip install -r requirements.txt
-  - docker info
+
 
 stages:
   - lint
