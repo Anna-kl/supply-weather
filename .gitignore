@@ -1,0 +1,53 @@
+﻿*.swp
+*.*~
+.DS_Store
+*.pyc
+
+# Visual Studio Code
+.vscode
+
+# User-specific files
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+build/
+bld/
+[Bb]in/
+[Oo]bj/
+msbuild.log
+msbuild.err
+msbuild.wrn
+
+# Visual Studio 2015
+.vs/
+
+# npm
+node_modules
+
+# logs
+*.log
+
+# do not ignore projects with 'log' at the end
+!Supply.*.Log/
+
+# databases
+*.mdf
+*.ldf
+
+# keys
+**/Keys/*.xml
+/src/Supply.Integration.GPN.Application/Properties/PublishProfiles
+
+.idea
+
+#resharper
+*.DotSettings
