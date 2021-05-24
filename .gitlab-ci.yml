@@ -1,25 +1,68 @@
 image: "python:3.9"
 
-
-
 stages:
   - lint
-  - build
+  - build_image
+  - push_image
 
-pylint:
+.docker_template:
+  image: docker:20.10.5
+  before_script:
+    - echo -n $CI_JOB_TOKEN | docker login -u gitlab-ci-token --password-stdin $CI_REGISTRY
+
+lint:
   stage: lint
   script:
     - pip install -r requirements.txt
     - pylint src --errors-only
 
-docker_build:
-  stage: build
-  image: docker:latest
-  services:
-    - docker:dind
-  variables:
-    DOCKER_DRIVER: overlay2 # not sure if this is needed
-    DOCKER_TLS_CERTDIR: "/certs"
+build_image:
+  stage: build_image
+  needs:
+    - lint
+  extends:
+    - .docker_template
+  only:
+    - master
+    - tags
   script:
-    - docker build -t weather .
-    - docker run weather
+    - docker pull $CI_REGISTRY_IMAGE:latest || true
+    - >
+      docker build
+      --pull
+      --build-arg VCS_REF=$CI_COMMIT_SHA
+      --build-arg VCS_URL=$CI_PROJECT_URL
+      --cache-from $CI_REGISTRY_IMAGE:latest
+      --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+      .
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+
+push_image:latest:
+  stage: push_image
+  needs:
+    - build_image
+  extends:
+    - .docker_template
+  variables:
+    GIT_STRATEGY: none
+  only:
+    - master
+  script:
+    - docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+    - docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA $CI_REGISTRY_IMAGE:latest
+    - docker push $CI_REGISTRY_IMAGE:latest
+
+push_image:tag:
+  stage: push_image
+  needs:
+    - build_image
+  extends:
+    - .docker_template
+  variables:
+    GIT_STRATEGY: none
+  only:
+    - tags
+  script:
+    - docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+    - docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
