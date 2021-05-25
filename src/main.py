@@ -4,12 +4,7 @@ from Models.Weather import Weather
 from Models.History import History
 import requests
 from datetime import datetime, timedelta
-url = 'https://api.weatherbit.io/v2.0/current?city=Tomsk&country=RU&key=48c910f8c4054b3cac5a84da4013c0d9&include=minutely'
-req = urllib.request.Request(url)
-import hug
-import jwt
 import json
-from hug_middleware_cors import CORSMiddleware
 import requests
 import client
 
