@@ -13,13 +13,13 @@ m=Weather()
 locations=m.get_location(c['access_token'])
 
 h=History()
-for loc in locations:
-    if loc['latitude']!=0:
-        h.get_data_hist(loc['latitude'], loc['longitude'], 2016, 2021,
-                        c['access_token'], loc['id'])
+# for loc in locations:
+#     if loc['latitude']!=0:
+#         h.get_data_hist(loc['latitude'], loc['longitude'], 2016, 2021,
+#                         c['access_token'], loc['id'])
 
 for loc in locations:
-    if loc['latitude'] != 0:
+    if loc['latitude'] != 0.0 and loc['latitude'] != None:
         data=m.get_data_forecast_day(loc['latitude'], loc['longitude'], 4, loc['id'])
         data=m.normalization(datetime.now(), data, c['access_token'], loc['id'])
         m.analize(data, datetime.now().date(), c['access_token'])
