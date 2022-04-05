@@ -9,7 +9,7 @@ import requests
 
 class History:
     def __init__(self):
-        self.api_key=os.environ['api_key']
+        self.api_key='48c910f8c4054b3cac5a84da4013c0d9'
         # self.connection()
 
         # url = 'postgresql://{}:{}@{}:{}/{}'
@@ -32,17 +32,15 @@ class History:
             try:
              snow=0 if data['data'][0]['snow'] is None else data['data'][0]['snow']
 
-             pres=0 if data['data'][0]['pres'] is None else data['data'][0]['pres']
-
              send =json.dumps({'restriction':'', 'warning':'', 'rh': data['data'][0]['rh'], 'temp': data['data'][0]['temp'], "locationId": location,
-                    'pres': pres / 1.334, "wind_spd": data['data'][0]['wind_spd'],
+                    "wind_spd": data['data'][0]['wind_spd'],
                     "clouds": data['data'][0]['clouds'],
                     "lng": lng, "lat": lat, "snow": snow, 'vis': 0, 'dttm': data['data'][0]['datetime']. format(year, day_t)})
 
              headers = {'Authorization':
                            'Bearer {0}'.format(token),
                        'Content-type': 'application/json'}
-             r = requests.post('https://localhost:44321/api/weather-restrictions/addparam', data=send, headers=headers,
+             r = requests.post('https://monitoring.gpn.supply/api/weather-restrictions/addparam', data=send, headers=headers,
                               verify=False)
             except Exception as ex:
                 print(ex)
