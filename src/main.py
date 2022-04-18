@@ -21,3 +21,4 @@ def get_weather():
             m.analize(data, datetime.now().date(), c['access_token'])
 
 
+get_weather()
